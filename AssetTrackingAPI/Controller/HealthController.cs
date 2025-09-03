@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using AssetTrackingAPI.Context;
 
+namespace AssetTrackingAPI.Controller;
+
 [ApiController]
 [Route("[controller]")]
 public class HealthController(AssetContext _context) : ControllerBase
