@@ -3,14 +3,14 @@ using AssetTrackingAPI.Context;
 
 [ApiController]
 [Route("[controller]")]
-public class HealthController(AssetContext context) : ControllerBase
+public class HealthController(AssetContext _context) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Get()
     {
         bool dbIsOk;
         try {
-            dbIsOk = await context.DataBase.CanConnectAsync();
+            dbIsOk = await _context.Database.CanConnectAsync();
         } catch {
             dbIsOk = false;
         }
@@ -18,9 +18,9 @@ public class HealthController(AssetContext context) : ControllerBase
         var status = new
         {
             api = "Online",
-            database = dbIsOk ? "Connected" : "Unavaible",
+            database = dbIsOk ? "Connected" : "Unavailable",
             timestamp = DateTime.UtcNow
-        }
+        };
 
         return Ok(status);
     }

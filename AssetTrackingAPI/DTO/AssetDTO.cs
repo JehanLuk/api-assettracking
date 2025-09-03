@@ -1,3 +1,7 @@
+using AssetTrackingAPI.Model;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace AssetTrackingAPI.DTO;
 
 public class AssetDTO
@@ -8,7 +12,7 @@ public class AssetDTO
 
     [Required(ErrorMessage = "The description is required!")]
     [Column(TypeName = "text")]
-    public string Description { get; set; }
+    public string Description { get; set; } = default!;
 
     public AssetEnumStatus Status { get; set; } = AssetEnumStatus.Active;
 }
