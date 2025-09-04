@@ -4,7 +4,7 @@ WORKDIR /app
 EXPOSE 5000
 
 # Copia o arquivo do projeto e restaura as dependências primeiro (cache para acelerar o build da imagem).
-COPY *.csproj .
+COPY src/AssetTrackingAPI/*.csproj ./
 RUN dotnet restore
 
 # Copia o resto do código-fonte.
