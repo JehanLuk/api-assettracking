@@ -4,9 +4,16 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(options =>
+// CORS
+builder.Services.AddCors(options =>
 {
-    options.ListenAnyIP(8080);
+    options.AddPolicy(name: "cors_policy",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
 });
 
 // Add services to the container
@@ -30,11 +37,19 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors("cors_policy");
+
+app.UseHttpsRedirection();
+
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AssetContext>();
+    dbContext.Database.Migrate();
+}
 
 app.MapGet("/", () => Results.Redirect("/swagger"))
     .ExcludeFromDescription();
-
-app.Urls.Add("http://0.0.0.0:8080");
 
 app.Run();
