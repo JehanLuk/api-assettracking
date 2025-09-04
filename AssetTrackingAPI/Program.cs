@@ -1,6 +1,9 @@
+using AssetTrackingAPI.Context;
+using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Configura o Kestrel para ouvir na porta 8080 em todas as interfaces
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(8080);
@@ -28,6 +31,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers();
-app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
+
+app.MapGet("/", () => Results.Redirect("/swagger"))
+    .ExcludeFromDescription();
+
+app.Urls.Add("http://0.0.0.0:8080");
 
 app.Run();
