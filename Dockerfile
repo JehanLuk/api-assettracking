@@ -3,22 +3,15 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
 EXPOSE 5000
 
-# Copia o arquivo do projeto e restaura as dependências primeiro (cache para acelerar o build da imagem).
-COPY ./AssetTrackingAPI/*.csproj ./
-RUN dotnet restore
+# Copia tudo de uma vez
+COPY . ./
 
-# Copia o resto do código-fonte.
-COPY . .
-
-# Publica a aplicação em modo Release
-RUN dotnet publish -c Release -o /app/publish
+# Restaura e publica
+RUN dotnet restore ./AssetTrackingAPI/AssetTrackingAPI.csproj
+RUN dotnet publish ./AssetTrackingAPI/AssetTrackingAPI.csproj -c Release -o /app/publish
 
 # Estágio 2: Imagem Final
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
-
-# Copia apenas os arquivos publicados do estágio de build.
-COPY --from=build /app/publish .
-
-# Define o entrypoint para rodar a aplicação.
-ENTRYPOINT ["dotnet", "TAssetTrackingAPI.dll"]
+COPY --from=build /app/publish ./
+ENTRYPOINT ["dotnet", "AssetTrackingAPI.dll"]
