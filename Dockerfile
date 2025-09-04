@@ -1,7 +1,6 @@
 ﻿# Estágio 1: Build da Aplicação
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
-EXPOSE 5000
 
 # Copia o .csproj e restaura
 COPY AssetTrackingAPI/*.csproj ./AssetTrackingAPI/
