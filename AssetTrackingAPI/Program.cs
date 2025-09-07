@@ -19,28 +19,42 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
-// Add services to the container
+// DbContext
 builder.Services.AddDbContext<AssetContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("psql")));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-// Swagger/OpenAPI (NSwag)
+// Swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// NSwag
 builder.Services.AddOpenApiDocument(options =>
 {
     options.DocumentName = "v1";
-    options.Title = "Asset Tracking API";
+    options.Title = "Asset Tracking API - NSwag";
     options.Version = "v1";
-    options.Description = "API para gerenciar ativos";
+    options.Description = "API para gerenciar ativos (NSwag)";
 });
 
 var app = builder.Build();
 
-// Habilitar Swagger para todos os ambientes
+// Swashbuckle
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Asset Tracking API - Swashbuckle v1");
+    c.RoutePrefix = "swagger-sw"; // Acesso: /swagger-sw
+});
+
+// NSwag
 app.UseOpenApi();
-app.UseSwaggerUi();
+app.UseSwaggerUi(c =>
+{
+    c.Path = "/swagger-ns"; // Acesso: /swagger-ns
+});
 
 app.UseCors("cors_policy");
 
@@ -49,15 +63,15 @@ app.UseCors("cors_policy");
 
 app.MapControllers();
 
-// Aplica migrações pendentes do banco
+// Aplica migrações pendentes
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AssetContext>();
     dbContext.Database.Migrate();
 }
 
-// Redireciona a raiz para o Swagger UI
-app.MapGet("/", () => Results.Redirect("/swagger"))
+// Redireciona a raiz para o NSwag Swagger UI
+app.MapGet("/", () => Results.Redirect("/swagger-ns"))
    .ExcludeFromDescription();
 
 app.Run();
