@@ -27,7 +27,7 @@ cd api-assettracking
 # Credenciais para o banco de dados PostgreSQL da sua máquina
 POSTGRES_USER=root
 POSTGRES_PASSWORD=root
-POSTGRES_DB=TodoAppDb
+POSTGRES_DB=CompanyTraceDB
 ```
 
 ### 3. Execute o Docker Compose: Use o arquivo docker-compose.dev.yml, que subirá tanto a API quanto um contêiner com o banco de dados PostgreSQL.
