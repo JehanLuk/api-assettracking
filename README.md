@@ -1,6 +1,6 @@
 # **AssetTrackingAPI**
 
-API simples para registro e rastreamento de ativos em empresas, permitindo CRUD (criação, leitura, atualização e deleção de ativos), incluido controle por status da situação do ativo na empresa (`Active`,`InUse`,`Maintenance`, `Retired`,`Sold`).
+API simples para registro e rastreamento de ativos em empresas, permitindo CRUD (criação, leitura, atualização e deleção de ativos), incluindo controle por status da situação do ativo na empresa (`Active`,`InUse`,`Maintenance`, `Retired`,`Sold`).
 
 ---
 
