@@ -45,7 +45,7 @@ app.UseSwaggerUi();
 app.UseCors("cors_policy");
 
 // Desabilitado HTTPS para teste externo
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.MapControllers();
 
