@@ -57,7 +57,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Redireciona a raiz para o Swagger UI
-app.MapGet("/", () => Results.Redirect("/swagger/index.html"))
+app.MapGet("/", () => Results.Redirect("/swagger"))
    .ExcludeFromDescription();
 
 app.Run();
