@@ -6,6 +6,8 @@ API simples para registro e rastreamento de ativos em empresas, permitindo CRUD 
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
 ![Build](https://github.com/JehanLuk/attendancetracker-api/actions/workflows/dotnet.yml/badge.svg)
 ![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue)
+![Oracle Cloud](https://img.shields.io/badge/Cloud-Oracle%20Cloud-blue)
+![Docker](https://img.shields.io/badge/Docker-Container-blue)
 
 ## Tecnologias do Projeto
 
