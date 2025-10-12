@@ -2,7 +2,10 @@
 
 API simples para registro e rastreamento de ativos em empresas, permitindo CRUD (criação, leitura, atualização e deleção de ativos), incluindo controle por status da situação do ativo na empresa (`Active`,`InUse`,`Maintenance`, `Retired`,`Sold`).
 
----
+![.NET](https://img.shields.io/badge/.NET-9.0-blue)
+![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
+![Build](https://github.com/JehanLuk/attendancetracker-api/actions/workflows/dotnet.yml/badge.svg)
+![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue)
 
 ## Tecnologias do Projeto
 
