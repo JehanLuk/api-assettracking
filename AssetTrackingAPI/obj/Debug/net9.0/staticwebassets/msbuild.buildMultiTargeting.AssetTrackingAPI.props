@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\AssetTrackingAPI.props" />
-</Project>

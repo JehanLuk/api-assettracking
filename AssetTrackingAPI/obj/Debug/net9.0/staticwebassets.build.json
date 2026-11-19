@@ -1,12 +1,1 @@
-{
-  "Version": 1,
-  "Hash": "1zSI8149342P4B42pZlrKwSSH3boyL6jw+a6BhXNZgk=",
-  "Source": "AssetTrackingAPI",
-  "BasePath": "_content/AssetTrackingAPI",
-  "Mode": "Default",
-  "ManifestType": "Build",
-  "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
-}
+{"Version":1,"Hash":"tAKcgtRB5nFjDiXoPsvhaYJHU741NC/73uFd/0v7wZI=","Source":"AssetTrackingAPI","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}

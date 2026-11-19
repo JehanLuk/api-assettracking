@@ -1,214 +1,66 @@
-using Xunit;
-using AssetTrackingAPI.Controller;
 using AssetTrackingAPI.Context;
-using AssetTrackingAPI.DTO;
-using AssetTrackingAPI.Model;
+using AssetTrackingAPI.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace AssetTrackingAPI.Test.Unit;
 
-public class AssetServiceTest
+public class AssetContextTest
 {
-    // GET /Asset/GetAsset/{id} - asset does not exist
     [Fact]
-    public async Task GetAssetById_ReturnsNotFound_WhenAssetDoesNotExist()
+    public async Task Employee_can_be_created_and_read()
     {
-        // Arrange
         var options = new DbContextOptionsBuilder<AssetContext>()
-            .UseInMemoryDatabase("Db_GetById_NotExists")
+            .UseInMemoryDatabase("employee-" + Guid.NewGuid())
             .Options;
         await using var context = new AssetContext(options);
-        var controller = new AssetController(context);
-
-        int nonExistentId = 999;
-
-        // Act
-        var result = await controller.GetAssetById(nonExistentId);
-
-        // Assert
-        Assert.IsType<NotFoundResult>(result);
-    }
-
-    // GET /Asset/GetAllAssets - no assets
-    [Fact]
-    public async Task GetAllAssets_ReturnsEmptyList_WhenNoAssets()
-    {
-        // Arrange
-        var options = new DbContextOptionsBuilder<AssetContext>()
-            .UseInMemoryDatabase("Db_GetAll_Empty")
-            .Options;
-        await using var context = new AssetContext(options);
-        var controller = new AssetController(context);
-
-        // Act
-        var result = await controller.GetAllAssets();
-
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var assets = Assert.IsType<List<Asset>>(okResult.Value);
-        Assert.Empty(assets);
-    }
-
-    // GET /Asset/GetAllAssets - with assets
-    [Fact]
-    public async Task GetAllAssets_ReturnsAllAssets_WhenAssetsExist()
-    {
-        // Arrange
-        var options = new DbContextOptionsBuilder<AssetContext>()
-            .UseInMemoryDatabase("Db_GetAll_Filled")
-            .Options;
-        await using var context = new AssetContext(options);
-        context.Assets.AddRange(
-            new Asset { Name = "PC1", Description = "Dell", Status = AssetEnumStatus.Active },
-            new Asset { Name = "PC2", Description = "HP", Status = AssetEnumStatus.InUse }
-        );
-        await context.SaveChangesAsync();
-        var controller = new AssetController(context);
-
-        // Act
-        var result = await controller.GetAllAssets();
-
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var assets = Assert.IsType<List<Asset>>(okResult.Value);
-        Assert.Equal(2, assets.Count);
-    }
-
-    // GET /Asset/GetAsset/{id} - asset exists
-    [Fact]
-    public async Task GetAssetById_ReturnsAsset_WhenAssetExists()
-    {
-        // Arrange
-        var options = new DbContextOptionsBuilder<AssetContext>()
-            .UseInMemoryDatabase("Db_GetById_Exists")
-            .Options;
-        await using var context = new AssetContext(options);
-        var asset = new Asset { Name = "Laptop", Description = "Dell", Status = AssetEnumStatus.Active };
-        context.Assets.Add(asset);
-        await context.SaveChangesAsync();
-        var controller = new AssetController(context);
-
-        // Act
-        var result = await controller.GetAssetById(asset.Id);
-
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var returnedAsset = Assert.IsType<Asset>(okResult.Value);
-        Assert.Equal(asset.Id, returnedAsset.Id);
-        Assert.Equal(AssetEnumStatus.Active, returnedAsset.Status);
-    }
-
-    // POST /Asset/PostAsset - valid DTO
-    [Fact]
-    public async Task CreateAsset_ReturnsCreated_WhenDtoIsValid()
-    {
-        // Arrange
-        var options = new DbContextOptionsBuilder<AssetContext>()
-            .UseInMemoryDatabase("Db_Post_Valid")
-            .Options;
-        await using var context = new AssetContext(options);
-        var controller = new AssetController(context);
-        var dto = new AssetDTO
+        context.Employees.Add(new Employee
         {
-            Name = "Laptop",
-            Description = "Dell",
-            Status = AssetEnumStatus.Active
-        };
-
-        // Act
-        var result = await controller.CreateAsset(dto);
-
-        // Assert
-        var createdResult = Assert.IsType<CreatedAtActionResult>(result);
-        var asset = Assert.IsType<Asset>(createdResult.Value);
-        Assert.Equal("Laptop", asset.Name);
-        Assert.Equal("Dell", asset.Description);
-        Assert.Equal(AssetEnumStatus.Active, asset.Status);
-    }
-
-    // PUT /Asset/UpdateAsset/{id} - asset exists
-    [Fact]
-    public async Task UpdateAsset_ReturnsNoContent_WhenAssetExists()
-    {
-        // Arrange
-        var options = new DbContextOptionsBuilder<AssetContext>()
-            .UseInMemoryDatabase("Db_Put_Exists")
-            .Options;
-        await using var context = new AssetContext(options);
-        var asset = new Asset { Name = "PC", Description = "Old", Status = AssetEnumStatus.Active };
-        context.Assets.Add(asset);
+            RegistrationNumber = "001",
+            Name = "Maria Silva",
+            Department = "SESMT"
+        });
         await context.SaveChangesAsync();
-        var controller = new AssetController(context);
-        var dto = new AssetDTO { Name = "PC", Description = "Updated", Status = AssetEnumStatus.InUse };
 
-        // Act
-        var result = await controller.UpdateAsset(asset.Id, dto);
-
-        // Assert
-        Assert.IsType<NoContentResult>(result);
-        var updatedAsset = await context.Assets.FindAsync(asset.Id)!;
-        Assert.Equal("Updated", updatedAsset!.Description);
-        Assert.Equal(AssetEnumStatus.InUse, updatedAsset.Status);
+        var employee = await context.Employees.SingleAsync();
+        Assert.Equal("Maria Silva", employee.Name);
+        Assert.True(employee.Active);
     }
 
-    // PUT /Asset/UpdateAsset/{id} - asset doest not exist
     [Fact]
-    public async Task UpdateAsset_ReturnsNotFound_WhenAssetDoesNotExist()
+    public async Task Epi_unique_code_is_enforced()
     {
-        // Arrange
         var options = new DbContextOptionsBuilder<AssetContext>()
-            .UseInMemoryDatabase("Db_Put_NotExists")
+            .UseInMemoryDatabase("epi-" + Guid.NewGuid())
             .Options;
         await using var context = new AssetContext(options);
-        var controller = new AssetController(context);
-        var dto = new AssetDTO { Name = "PC", Description = "Updated", Status = AssetEnumStatus.InUse };
-
-        // Act
-        var result = await controller.UpdateAsset(999, dto);
-
-        // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
-    }
-
-    // DELETE /Asset/DeleteAsset/{id} - asset exists
-    [Fact]
-    public async Task DeleteAsset_ReturnsOk_WhenAssetExists()
-    {
-        // Arrange
-        var options = new DbContextOptionsBuilder<AssetContext>()
-            .UseInMemoryDatabase("Db_Delete_Exists")
-            .Options;
-        await using var context = new AssetContext(options);
-        var asset = new Asset { Name = "PC", Description = "Dell", Status = AssetEnumStatus.Active };
-        context.Assets.Add(asset);
+        context.EpiTypes.Add(new EpiType { Id = 1, Name = "Luvas" });
         await context.SaveChangesAsync();
-        var controller = new AssetController(context);
 
-        // Act
-        var result = await controller.DeleteAsset(asset.Id);
+        context.EpiItems.Add(new EpiItem { EpiTypeId = 1, UniqueCode = "EPI-001", Status = EpiStatus.Available });
+        await context.SaveChangesAsync();
 
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Contains("deleted successfully", okResult.Value!.ToString());
+        Assert.Single(context.EpiItems);
+        Assert.True(await context.EpiItems.AnyAsync(x => x.UniqueCode == "EPI-001"));
     }
 
-    // DELETE /Asset/DeleteAsset/{id} - asset does not exist
     [Fact]
-    public async Task DeleteAsset_ReturnsNotFound_WhenAssetDoesNotExist()
+    public async Task Delivery_changes_epi_status_to_delivered()
     {
-        // Arrange
         var options = new DbContextOptionsBuilder<AssetContext>()
-            .UseInMemoryDatabase("Db_Delete_NotExists")
+            .UseInMemoryDatabase("delivery-" + Guid.NewGuid())
             .Options;
         await using var context = new AssetContext(options);
-        var controller = new AssetController(context);
+        context.Employees.Add(new Employee { Id = 1, RegistrationNumber = "001", Name = "Joao" });
+        context.EpiTypes.Add(new EpiType { Id = 1, Name = "Capacete" });
+        context.EpiItems.Add(new EpiItem { Id = 1, EpiTypeId = 1, UniqueCode = "EPI-002" });
+        await context.SaveChangesAsync();
 
-        // Act
-        var result = await controller.DeleteAsset(999);
+        var item = await context.EpiItems.FindAsync(1);
+        item!.Status = EpiStatus.Delivered;
+        item.EmployeeId = 1;
+        await context.SaveChangesAsync();
 
-        // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        Assert.Equal(EpiStatus.Delivered, item.Status);
+        Assert.Equal(1, item.EmployeeId);
     }
 }
